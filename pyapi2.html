@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Forward Geocoding with Python backend</title>
+</head>
+<body>
+<h1>Forward Geocoding</h1>
+<form id="geocode-form">
+    <input type="text" id="location-input" placeholder="Enter a location">
+    <button type="submit">Geocode</button>
+</form>
+<div id="result"></div>
+<script src="https:code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function) () {
+      $('#geocode-form').submit(function  (e){
+           e.preventDefault();
+           var location = $('location-<input').val();
+           $.post('/geocode',{location:location},function (data) {
+             if(data.results.length >0) {
+                var result = data.results[0];
+                var formattedAddress = result.formatted;
+                var latitude = result.geometry.lat;
+                var longitude = result.geometry.lng;
+                $('#result').html('
+                     <p>Location: ${formattedAddress}</p>
+                     <p>Latitude: ${latitude}</p>
+                     <p>Longitude: ${longitude}</p>
+                     ');
+             } else {
+                  $('#result').html('<p>Location not found</>);
+             }
+           });
+      });
+    });
+ </script>
+</body>
+</html>
+
+
+

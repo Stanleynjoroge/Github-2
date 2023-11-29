@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Forward Geocoding with OpenStreetMap</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  </head>
+  <body>
+    <div id="map" style="height: 400px;"></div>
+    <form id="geocoding-form">
+      <input type="text" id="location-input" placeholder="Enter a location">
+      <button type="submit">Geocode</button>
+    </form>
+    <div id="result"></div>
+    <script>
+      var map = L.map('map').setView([0.0236,37.9062], 5);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+
+      var geocodingForm = document.getElementById('geocoding-form');
+      var locationInput = document.getElementById('location-input');
+      var resultDiv = document.getElementById('result');
+
+      geocodingForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var location = locationInput.value;
+
+        // You can use a forward geocoding service like Nominatim for OSM.
+        // Construct the request URL and make an API call to geocode the location.
+        var nominatimUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${location}`;
+
+        fetch(nominatimUrl)
+          .then(response => response.json())
+          .then(data => {
+            if (data.length > 0) {
+              var firstResult = data[0];
+              var latitude = parseFloat(firstResult.lat);
+              var longitude = parseFloat(firstResult.lon);
+
+              map.setView([latitude, longitude], 14); // Set the map view to the geocoded location
+              resultDiv.textContent = `Location: ${location}, Latitude: ${latitude}, Longitude: ${longitude}`;
+            } else {
+              resultDiv.textContent = 'Location not found';
+            }
+          })
+          .catch(error => console.error(error));
+      });
+    </script>
+  </body>
+</html>

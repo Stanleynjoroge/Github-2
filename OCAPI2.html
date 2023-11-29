@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Forward Geocoding with OpenStreetMap and OpenCage</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  </head>
+  <body>
+    <div id="map" style="height: 400px;"></div>
+    <form id="geocoding-form">
+      <input type="text" id="location-input" placeholder="Enter a location">
+      <button type="submit">Geocode</button>
+    </form>
+    <div id="result"></div>
+    <script>
+      var map = L.map('map').setView([0.0236,37.9062], 5);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+
+      var geocodingForm = document.getElementById('geocoding-form');
+      var locationInput = document.getElementById('location-input');
+      var resultDiv = document.getElementById('result');
+      var marker;
+
+      geocodingForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var location = locationInput.value;
+
+        // Replace 'YOUR_OPENCAGE_API_KEY' with your OpenCage API key
+        var openCageApiKey = 'b41d417937094665ab100b905a07fea6';
+
+        // Construct the forward geocoding request URL using the OpenCage Geocoding API
+        var openCageUrl = `https://api.opencagedata.com/geocode/v1/json?q=${location}&key=${openCageApiKey}`;
+
+        fetch(openCageUrl)
+          .then(response => response.json())
+          .then(data => {
+            if (data.results.length > 0) {
+              var firstResult = data.results[0];
+              var latitude = firstResult.geometry.lat;
+              var longitude = firstResult.geometry.lng;
+
+              // Clear existing marker
+              if (marker) {
+                map.removeLayer(marker);
+              }
+
+              // Set the map view to the geocoded location and add a marker
+              map.setView([latitude, longitude], 14);
+              marker = L.marker([latitude, longitude]).addTo(map);
+
+              resultDiv.textContent = `Location: ${location}, Latitude: ${latitude}, Longitude: ${longitude}`;
+            } else {
+              resultDiv.textContent = 'Location not found';
+            }
+          })
+          .catch(error => console.error(error));
+      });
+    </script>
+  </body>
+</html>

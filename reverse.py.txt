@@ -1,0 +1,35 @@
+import requests
+
+# Replace 'YOUR_API_KEY' with your actual OpenCage API key
+API_KEY = 'b41d417937094665ab100b905a07fea6'
+
+# The latitude and longitude coordinates to reverse geocode
+latitude =  -1.2921
+longitude = 36.8219
+
+# Create the API request URL
+base_url = 'https://api.opencagedata.com/geocode/v1/json'
+params = {
+    'q': f'{latitude},{longitude}',
+    'key': API_KEY
+}
+
+# Send the request to the OpenCage API
+response = requests.get(base_url, params=params)
+
+# Check if the request was successful
+if response.status_code == 200:
+    data = response.json()
+
+    if data['status']['code'] == 200:
+        # Extract the formatted address from the response
+        formatted_address = data['results'][0]['formatted']
+
+        print(f'Latitude: {latitude}')
+        print(f'Longitude: {longitude}')
+        print(f'Formatted Address: {formatted_address}')
+    else:
+        print(f'Error: {data["status"]["message"]}')
+else:
+    print(f'HTTP Error: {response.status_code}')
+

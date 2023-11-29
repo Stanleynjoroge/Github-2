@@ -1,0 +1,26 @@
+from flask import Flask, render_template, request, jsonify
+import requests
+
+app = Flask(__name__)
+
+OPENCAGE_API_KEY = 'b41d417937094665ab100b905a07fea6'
+
+@app.route('/')
+def index():
+    return render_template('pyapi.html')
+
+@app.route('/geocode', methods=['POST'])
+def geocode():
+    location = request.form.get('location')
+
+    openCageUrl = f'https://api.opencagedata.com/geocode/v1/json?q={location}&key={OPENCAGE_API_KEY}'
+    response = requests.get(openCageUrl)
+
+    if response.status_code == 200:
+        data = response.json()
+        return jsonify(data)
+    else:
+        return jsonify({'error': 'Geocoding failed'})
+
+    if __name__ == '__main__':
+        app.run(debug=True)

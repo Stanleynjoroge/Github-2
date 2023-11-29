@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Reverse Geocoding with Google Maps</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="address"></div>
+    <script>
+      function initMap() {
+        // Create a map centered at the specified latitude and longitude
+        var map = new google.maps.Map(document.getElementById('map'), {
+          center: { lat: 37.423070, lng: -122.084143 },
+          zoom: 15
+        });
+
+        // Perform reverse geocoding with the OpenCage API
+        var API_KEY = 'b41d417937094665ab100b905a07fea6';
+        var latitude = 37.423070;
+        var longitude = -122.084143;
+        var openCageUrl = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${API_KEY}`;
+
+        fetch(openCageUrl)
+          .then(response => response.json())
+          .then(data => {
+            var formattedAddress = data.results[0].formatted;
+            document.getElementById('address').textContent = 'Address: ' + formattedAddress;
+          })
+          .catch(error => console.error(error));
+      }
+    </script>
+  </body>
+</html>

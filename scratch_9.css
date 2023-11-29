@@ -1,0 +1,16 @@
+body {
+  background: #1a8865;
+}
+
+.logo {
+  width: 120px;
+}
+
+.has-text-success-dark {
+  color: #1a8865;
+}
+
+#map {
+  height: 600px;
+}
+

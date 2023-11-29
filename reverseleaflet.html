@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Reverse Geocoding with OpenStreetMap</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  </head>
+  <body>
+    <div id="map" style="height: 400px;"></div>
+    <div id="address"></div>
+    <script>
+      var map = L.map('map').setView([0.0236,37.9062], 5);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+
+      var API_KEY = 'b41d417937094665ab100b905a07fea6';
+      var latitude =  -1.2832533;
+      var longitude =  36.8172449;
+      var openCageUrl = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${API_KEY}`;
+
+      fetch(openCageUrl)
+        .then(response => response.json())
+        .then(data => {
+          var formattedAddress = data.results[0].formatted;
+          document.getElementById('address').textContent = 'Address: ' + formattedAddress;
+        })
+        .catch(error => console.error(error));
+    </script>
+  </body>
+</html>
